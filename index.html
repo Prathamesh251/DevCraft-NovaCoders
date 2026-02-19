@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CivicPulse</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<div id="page-login" class="page active">
+  <div class="login-bg">
+    <div class="login-card">
+      <div class="login-logo">🛡️</div>
+      <h1 class="login-title">CivicPulse</h1>
+      <p class="login-sub">Civic Complaint Management</p>
+
+      <div class="role-row">
+        <div class="role-card active" data-role="citizen">
+          <div class="role-icon">👤</div>
+          <div class="role-label">Citizen</div>
+          <div class="role-desc">File &amp; track complaints</div>
+        </div>
+        <div class="role-card" data-role="staff">
+          <div class="role-icon">🏢</div>
+          <div class="role-label">Staff / Dept</div>
+          <div class="role-desc">Manage &amp; respond</div>
+        </div>
+        <div class="role-card" data-role="admin">
+          <div class="role-icon">🛡️</div>
+          <div class="role-label">Admin</div>
+          <div class="role-desc">Oversee all depts</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="login-name">Full Name</label>
+        <input type="text" id="login-name" placeholder="Enter your name" />
+      </div>
+      <div class="form-group">
+        <label class="label" for="login-email">Email</label>
+        <input type="email" id="login-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group" id="dept-group" style="display:none">
+        <label class="label" for="login-dept">Department</label>
+        <select id="login-dept">
+          <option value="">Select department</option>
+          <option>Public Works</option>
+          <option>Health Dept</option>
+          <option>Police/Fire</option>
+          <option>Water Authority</option>
+          <option>Power Dept</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-block" id="btn-login">Sign In →</button>
+      <p class="login-footer">Demo app — no real authentication</p>
+    </div>
+  </div>
+</div>
+
+<!-- citizen dashboard -->
+<div id="page-citizen" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="citizen-welcome">Welcome 👋</div>
+      <div class="topbar-sub">Citizen Dashboard</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="logout">Sign Out →</button>
+  </div>
+  <div class="page-body">
+    <button class="btn btn-primary btn-block" id="btn-new-complaint" style="padding:13px;font-size:15px;margin-bottom:16px">
+      + File New Complaint
+    </button>
+    <div class="tabs">
+      <button class="tab active" data-tab="active">Active (0)</button>
+      <button class="tab" data-tab="updates">Updates (0)</button>
+      <button class="tab" data-tab="history">History (0)</button>
+      <button class="tab" data-tab="all">All Complaints</button>
+    </div>
+
+    <div id="citizen-filter-bar" class="filter-bar" style="display:none">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="citizen-search" placeholder="Search..." />
+      </div>
+      <select id="citizen-filter-cat" class="filter-select">
+        <option value="All">All Categories</option>
+        <option>Infrastructure</option>
+        <option>Sanitation</option>
+        <option>Safety</option>
+        <option>Water</option>
+        <option>Electricity</option>
+      </select>
+      <select id="citizen-filter-dept" class="filter-select">
+        <option value="All">All Departments</option>
+        <option>Public Works</option>
+        <option>Health Dept</option>
+        <option>Police/Fire</option>
+        <option>Water Authority</option>
+        <option>Power Dept</option>
+      </select>
+      <select id="citizen-filter-status" class="filter-select">
+        <option value="All">All Statuses</option>
+        <option>Received</option>
+        <option>In Progress</option>
+        <option>Resolved</option>
+      </select>
+      <select id="citizen-filter-urg" class="filter-select">
+        <option value="All">All Urgency</option>
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+      </select>
+      <span id="citizen-filter-count" class="filter-count"></span>
+    </div>
+
+    <div id="citizen-list"></div>
+  </div>
+</div>
+
+<!-- staff dashboard -->
+<div id="page-staff" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="staff-dept-title">Department</div>
+      <div class="topbar-sub" id="staff-name-sub">Staff Dashboard</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="logout">Sign Out</button>
+  </div>
+  <div class="page-body">
+    <div class="grid-4" id="staff-stats" style="margin-bottom:18px"></div>
+    <div class="tabs">
+      <button class="tab active" id="tab-mydept" data-view="mine">⚠️ My Department</button>
+      <button class="tab" id="tab-otherdept" data-view="other">👁️ Other Departments</button>
+    </div>
+    <div id="staff-list"></div>
+  </div>
+</div>
+
+<!-- admin dashboard -->
+<div id="page-admin" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">🛡️ Admin Dashboard</div>
+      <div class="topbar-sub" id="admin-name-sub">System-wide overview</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" data-action="logout">Sign Out</button>
+  </div>
+  <div class="page-body">
+    <div class="grid-5" id="admin-cat-stats" style="margin-bottom:18px"></div>
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="admin-search" placeholder="Search complaints..." />
+      </div>
+      <select id="admin-filter-cat" class="filter-select">
+        <option value="All">All Categories</option>
+        <option>Infrastructure</option>
+        <option>Sanitation</option>
+        <option>Safety</option>
+        <option>Water</option>
+        <option>Electricity</option>
+      </select>
+      <select id="admin-filter-urg" class="filter-select">
+        <option value="All">All Urgency</option>
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+      </select>
+      <span id="admin-count" class="filter-count">0 complaints</span>
+    </div>
+    <div id="admin-list"></div>
+  </div>
+</div>
+
+<!-- complaint form modal -->
+<div id="modal-form" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <span>📋</span>
+        <span class="modal-title">Submit a Complaint</span>
+      </div>
+      <button class="btn btn-ghost btn-icon" data-close-modal="modal-form">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="emergency-toggle" id="emergency-toggle">
+        <div>
+          <div class="emergency-label" id="emergency-label">🚨 Mark as Emergency</div>
+          <div class="emergency-sub">Immediate attention required</div>
+        </div>
+        <div class="toggle-switch" id="emergency-switch">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="f-title">Complaint Title *</label>
+        <input type="text" id="f-title" placeholder="Brief summary of the issue" />
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="f-desc">Description *</label>
+        <textarea id="f-desc" placeholder="Describe the issue in detail..."></textarea>
+        <div id="ai-badge" class="ai-chip" style="display:none">✨ AI auto-detected category &amp; urgency</div>
+      </div>
+
+      <div class="voice-box">
+        <div class="voice-hint">🎤 Or record your complaint (optional)</div>
+        <button class="record-btn" id="record-btn">🎙</button>
+        <div id="record-status" class="record-status" style="display:none">Recording... Click to stop</div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Category (AI Auto-detected) *</label>
+        <div class="cat-chips" id="cat-chips">
+          <div class="cat-chip" data-cat="Infrastructure">🏗️ Infrastructure</div>
+          <div class="cat-chip" data-cat="Sanitation">🗑️ Sanitation</div>
+          <div class="cat-chip" data-cat="Safety">🛡️ Safety</div>
+          <div class="cat-chip" data-cat="Water">💧 Water</div>
+          <div class="cat-chip" data-cat="Electricity">⚡ Electricity</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Urgency Level *</label>
+        <div class="urgency-row">
+          <button class="urgency-btn high"   data-urg="High">⚠️ High</button>
+          <button class="urgency-btn medium" data-urg="Medium">🕐 Medium</button>
+          <button class="urgency-btn low"    data-urg="Low">✅ Low</button>
+        </div>
+        <div class="hint-text">Auto-detected from description, you can override.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Photos (Optional)</label>
+        <div class="upload-area" id="btn-photo-upload">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Click to attach photos</div>
+          <div class="upload-hint">JPG, PNG up to 10MB</div>
+          <input type="file" id="photo-input" accept="image/*" multiple style="display:none" />
+        </div>
+        <div id="photo-info" class="success-text" style="display:none"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Location / Address *</label>
+        <div class="address-row">
+          <input type="text" id="f-address" placeholder="Enter address" />
+          <button class="btn btn-ghost" id="btn-gps">📍 Use GPS</button>
+        </div>
+        <div id="gps-status" class="success-text" style="display:none">✓ GPS location obtained</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="label" for="f-cname">Your Name</label>
+          <input type="text" id="f-cname" placeholder="Enter your name" />
+        </div>
+        <div class="form-group">
+          <label class="label" for="f-phone">Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="+91 555-0000" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="f-email">Email (Optional)</label>
+        <input type="email" id="f-email" placeholder="your@email.com" />
+      </div>
+
+      <div class="notif-prefs">
+        <div class="notif-prefs-title">Notifications</div>
+        <label class="checkbox-row"><input type="checkbox" id="notif-status" checked /> Enable status updates</label>
+        <label class="checkbox-row"><input type="checkbox" id="notif-push" checked /> Enable push notifications (if permitted)</label>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="btn-cancel-form" style="flex:1">Cancel</button>
+        <button class="btn btn-primary" id="btn-submit-complaint" style="flex:2">📤 Submit Complaint</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- complaint detail modal -->
+<div id="modal-detail" class="modal-overlay" style="display:none">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <div style="flex:1">
+        <div id="detail-badges" class="badge-row"></div>
+        <h2 id="detail-title" class="detail-title"></h2>
+        <div id="detail-meta" class="detail-meta"></div>
+      </div>
+      <button class="btn btn-ghost btn-icon" data-close-modal="modal-detail">✕</button>
+    </div>
+    <div style="padding:0 18px">
+      <div class="tabs">
+        <button class="tab active" data-tab="details">Details</button>
+        <button class="tab" data-tab="updates" id="updates-tab-btn">Updates</button>
+        <button class="tab" data-tab="notes">Notes</button>
+      </div>
+    </div>
+    <div class="modal-body">
+
+      <div id="detail-tab-details">
+        <div style="margin-bottom:14px">
+          <div class="label">Description</div>
+          <p id="detail-desc" class="detail-text"></p>
+        </div>
+        <div class="form-row" style="margin-bottom:14px">
+          <div>
+            <div class="label">Location</div>
+            <div id="detail-address" class="detail-text"></div>
+          </div>
+          <div>
+            <div class="label">Reported By</div>
+            <div id="detail-reporter" class="detail-text"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div class="label">Duplicate Reports</div>
+          <div id="detail-reports" class="detail-text"></div>
+        </div>
+        <div id="detail-status-section" style="display:none">
+          <div class="label">Update Status</div>
+          <div class="status-steps">
+            <div class="status-step" data-status="Received">Received</div>
+            <div class="status-step" data-status="In Progress">In Progress</div>
+            <div class="status-step" data-status="Resolved">Resolved</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="detail-tab-updates" style="display:none">
+        <div id="updates-timeline" class="timeline"></div>
+        <div id="update-form" style="display:none;margin-top:14px">
+          <div class="label">Add Update</div>
+          <textarea id="update-text" placeholder="Add a status update visible to citizens..."></textarea>
+          <button class="btn btn-primary" id="btn-post-update" style="margin-top:7px">Post Update</button>
+        </div>
+      </div>
+
+      <div id="detail-tab-notes" style="display:none">
+        <div id="notes-list"></div>
+        <div id="note-form" style="display:none;margin-top:7px">
+          <textarea id="note-text" placeholder="Internal note — not visible to the citizen..."></textarea>
+          <button class="btn btn-ghost" id="btn-post-note" style="margin-top:7px">Add Note</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- toast -->
+<div id="toast" class="toast" style="display:none">
+  <span id="toast-icon"></span>
+  <div class="toast-body">
+    <div id="toast-title"></div>
+    <div id="toast-msg"></div>
+  </div>
+  <button id="toast-close">✕</button>
+</div>
+
+<!-- load order matters: state → utils → dashboard → modal -->
+<script src="state.js"></script>
+<script src="utils.js"></script>
+<script src="dashboard.js"></script>
+<script src="modal.js"></script>
+
+</body>
+</html>
