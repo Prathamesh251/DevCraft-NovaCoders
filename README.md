@@ -9,7 +9,7 @@ Setup and Installation:-
 3.pip install pandas numpy scikit-learn streamlit (If requirements.txt not present)
 4.uvicorn main:app --reload
 5.Then open browser at: http://localhost:8501
-6.Then enter any complaint like "Street lights not working in my area"
+6.Then enter any complaint like "Fire in the hospital"
 
 How It Works:-
 1.User enters complaint text
